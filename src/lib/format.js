@@ -1,7 +1,8 @@
+const yearFormat = new Intl.NumberFormat('en-US', { useGrouping: false })
+
 export function formatYear(year) {
   if (year === null || year === undefined || Number.isNaN(year)) return ''
-  if (year < 0) return `${Math.abs(year)} BCE`
-  return String(year)
+  return yearFormat.format(year)
 }
 
 export function formatYearRange([from, to]) {
