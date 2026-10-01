@@ -52,7 +52,7 @@ function Highlights() {
           ? Array.from({ length: 6 }, (_, i) => <div key={i} className="rail__item rail__item--skeleton skeleton" />)
           : items.map((art) => (
               <figure key={art.id} className="rail__item">
-                <button type="button" className="rail__img" onClick={() => openLightbox(items, art.id)} aria-label={`View ${art.title} full screen`}>
+                <button type="button" className="rail__img" onClick={() => openLightbox(art.id, items)} aria-label={`View ${art.title} full screen`}>
                   <img src={art.image} alt="" loading="lazy" />
                 </button>
                 <figcaption>

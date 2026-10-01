@@ -121,7 +121,7 @@ export default function Collections() {
         {favorites.length ? (
           <MasonryGrid
             items={favorites}
-            onOpen={(art) => openLightbox(favorites, art.id)}
+            onOpen={(art) => openLightbox(art.id, favorites)}
             renderActions={(art) => <CardActions art={art} />}
           />
         ) : (

@@ -1,10 +1,11 @@
 import { create } from 'zustand'
+import { useExplore } from './explore'
 
 export const useLightbox = create((set) => ({
   items: [],
   index: -1,
 
-  open: (items, id) => {
+  open: (id, items = useExplore.getState().results) => {
     const index = items.findIndex((a) => a.id === id)
     set({ items, index: index < 0 ? 0 : index })
   },

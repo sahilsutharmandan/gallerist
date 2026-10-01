@@ -85,7 +85,7 @@ export default function ArtworkDetail() {
   const web = data.images?.web
 
   const gallery = [summary, ...related.items]
-  const openViewer = (art) => openLightbox(gallery, art.id)
+  const openViewer = (art) => openLightbox(art.id, gallery)
 
   const copyTombstone = async () => {
     try {

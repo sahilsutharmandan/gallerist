@@ -109,7 +109,7 @@ export default function Compare() {
   const openLightbox = useLightbox((s) => s.open)
   const filled = slots.filter(Boolean)
 
-  const open = (art) => openLightbox(filled, art.id)
+  const open = (art) => openLightbox(art.id, filled)
 
   return (
     <div className="container page">

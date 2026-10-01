@@ -116,7 +116,7 @@ export default function CollectionDetail() {
             <button
               type="button"
               className="btn btn--primary"
-              onClick={() => openLightbox(items, items[0].id)}
+              onClick={() => openLightbox(items[0].id, items)}
               disabled={!items.length}
             >
               <Icon name="expand" /> View all
@@ -161,7 +161,7 @@ export default function CollectionDetail() {
               <button
                 type="button"
                 className="collection-row__thumb"
-                onClick={() => openLightbox(items, art.id)}
+                onClick={() => openLightbox(art.id, items)}
                 aria-label={`View ${art.title} full screen`}
               >
                 <img src={art.image} alt="" loading="lazy" />
