@@ -6,6 +6,7 @@ import { useArtwork, useRelated } from '../hooks/useArtwork'
 import { RichText, plainText } from '../lib/richText'
 import { artistName } from '../lib/format'
 import { toast } from '../store/ui'
+import { useLightbox } from '../store/lightbox'
 
 function Meta({ label, children }) {
   if (!children) return null
@@ -17,9 +18,8 @@ function Meta({ label, children }) {
   )
 }
 
-function RelatedStrip({ department, artworkId }) {
-  const { items, status } = useRelated(department, artworkId)
-  if (status === 'error' || (status === 'ready' && !items.length)) return null
+function RelatedStrip({ department, items, status, onOpen }) {
+  if (status !== 'loading' && !items.length) return null
   return (
     <section className="related">
       <div className="related__head">
@@ -38,6 +38,17 @@ function RelatedStrip({ department, artworkId }) {
               <Link key={art.id} to={`/artwork/${art.id}`} className="related__card">
                 <div className="related__thumb">
                   <img src={art.image} alt="" loading="lazy" />
+                  <button
+                    type="button"
+                    className="art-card__action related__open"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      onOpen(art)
+                    }}
+                    aria-label={`View ${art.title} full screen`}
+                  >
+                    <Icon name="expand" />
+                  </button>
                 </div>
                 <p className="related__title clamp-2">{art.title}</p>
                 <p className="related__date">{art.date}</p>
@@ -51,7 +62,9 @@ function RelatedStrip({ department, artworkId }) {
 export default function ArtworkDetail() {
   const { id } = useParams()
   const artworkId = Number(id)
-  const { data, status, error, retry } = useArtwork(artworkId)
+  const { data, summary, status, error, retry } = useArtwork(artworkId)
+  const related = useRelated(data?.department, artworkId)
+  const openLightbox = useLightbox((s) => s.open)
   const [bioOpen, setBioOpen] = useState(false)
 
   if (status === 'loading') return <Loading label="Fetching artwork" />
@@ -61,6 +74,9 @@ export default function ArtworkDetail() {
   const creator = data.creators?.[0]
   const culture = (data.culture ?? []).filter(Boolean).join('; ')
   const web = data.images?.web
+
+  const gallery = [summary, ...related.items]
+  const openViewer = (art) => openLightbox(gallery, art.id)
 
   const copyTombstone = async () => {
     try {
@@ -75,7 +91,12 @@ export default function ArtworkDetail() {
     <div className="detail">
       <div className="container detail__layout">
         <div className="detail__stage">
-          <button type="button" className="detail__image" aria-label="Open full screen">
+          <button
+            type="button"
+            className="detail__image"
+            onClick={() => openViewer(summary)}
+            aria-label="Open full screen"
+          >
             <img
               src={web?.url}
               alt={data.title}
@@ -165,7 +186,12 @@ export default function ArtworkDetail() {
       </div>
 
       <div className="container">
-        <RelatedStrip department={data.department} artworkId={artworkId} />
+        <RelatedStrip
+          department={data.department}
+          items={related.items}
+          status={related.status}
+          onOpen={openViewer}
+        />
       </div>
     </div>
   )

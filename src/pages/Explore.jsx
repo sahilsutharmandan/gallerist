@@ -5,6 +5,7 @@ import MasonryGrid, { MasonrySkeleton } from '../components/MasonryGrid'
 import { EmptyState, ErrorState } from '../components/PageState'
 import { DEFAULT_FILTERS, useExplore } from '../store/explore'
 import { toast } from '../store/ui'
+import { useLightbox } from '../store/lightbox'
 import { visibleArtworks } from '../lib/sortArtworks'
 import { pluralize } from '../lib/format'
 
@@ -21,6 +22,7 @@ export default function Explore() {
   const setSort = useExplore((s) => s.setSort)
   const search = useExplore((s) => s.search)
   const loadMore = useExplore((s) => s.loadMore)
+  const openLightbox = useLightbox((s) => s.open)
 
   useEffect(() => {
     const q = params.get('q')
@@ -83,7 +85,7 @@ export default function Explore() {
         {status !== 'error' && (status !== 'loading' || results.length) ? (
           visible.length ? (
             <div className={status === 'loading' ? 'is-refreshing' : undefined}>
-              <MasonryGrid items={visible} />
+              <MasonryGrid items={visible} onOpen={(art) => openLightbox(visible, art.id)} />
             </div>
           ) : status === 'ready' ? (
             <EmptyState icon="search" title="No artworks match">

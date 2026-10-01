@@ -4,6 +4,7 @@ import Header from './components/Header'
 import MobileNav from './components/MobileNav'
 import Footer from './components/Footer'
 import Toasts from './components/Toasts'
+import Lightbox from './components/Lightbox'
 import { useUi } from './store/ui'
 import Home from './pages/Home'
 import Explore from './pages/Explore'
@@ -41,6 +42,7 @@ export default function App() {
       </main>
       <Footer />
       <MobileNav badges={badges} />
+      <Lightbox />
       <Toasts />
     </>
   )

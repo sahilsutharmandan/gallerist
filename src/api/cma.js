@@ -84,6 +84,7 @@ export function toSummary(a) {
     technique: a.technique || '',
     license: a.share_license_status || '',
     image: web.url,
+    imageLarge: a.images?.print?.url || web.url,
     width: Number(web.width) || 4,
     height: Number(web.height) || 5,
   }
