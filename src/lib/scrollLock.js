@@ -1,35 +1,30 @@
-let saved = null
+let locks = 0
 
 export function lockScroll() {
-  if (saved) return
+  locks += 1
+  if (locks > 1) return
   const { body, documentElement } = document
-  const scrollY = window.scrollY
   const scrollbar = window.innerWidth - documentElement.clientWidth
-  saved = {
-    scrollY,
-    styles: {
-      position: body.style.position,
-      top: body.style.top,
-      left: body.style.left,
-      right: body.style.right,
-      overflow: body.style.overflow,
-      paddingRight: body.style.paddingRight,
-    },
-  }
   Object.assign(body.style, {
     position: 'fixed',
-    top: `-${scrollY}px`,
+    top: `-${window.scrollY}px`,
     left: '0',
     right: '0',
     overflow: 'hidden',
-    paddingRight: scrollbar > 0 ? `${scrollbar}px` : body.style.paddingRight,
+    paddingRight: scrollbar > 0 ? `${scrollbar}px` : '',
   })
 }
 
 export function unlockScroll() {
-  if (!saved) return
-  const { scrollY, styles } = saved
-  Object.assign(document.body.style, styles)
-  window.scrollTo(0, scrollY)
-  saved = null
+  if (locks === 0) return
+  locks -= 1
+  if (locks > 0) return
+  const { body } = document
+  body.style.position = ''
+  body.style.top = ''
+  body.style.left = ''
+  body.style.right = ''
+  body.style.overflow = ''
+  body.style.paddingRight = ''
+  window.scrollTo(0, -parseInt(body.style.top || '0', 10))
 }

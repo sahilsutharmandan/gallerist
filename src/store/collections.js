@@ -29,7 +29,9 @@ export const useCollections = create((set, get) => ({
       createdAt: now,
       updatedAt: now,
     }
-    set((s) => ({ collections: [...s.collections, collection] }))
+    const { collections } = get()
+    collections.push(collection)
+    set({ collections })
     return collection
   },
 
@@ -78,7 +80,7 @@ export const useCollections = create((set, get) => ({
   },
 }))
 
-useCollections.subscribe((state, prev) => {
-  if (state.collections !== prev.collections) storage.set('collections', state.collections)
-  if (state.favorites !== prev.favorites) storage.set('favorites', state.favorites)
+useCollections.subscribe((state) => {
+  storage.set('collections', state.collections)
+  storage.set('favorites', state.favorites)
 })
