@@ -7,6 +7,7 @@ import Toasts from './components/Toasts'
 import { useUi } from './store/ui'
 import Home from './pages/Home'
 import Explore from './pages/Explore'
+import ArtworkDetail from './pages/ArtworkDetail'
 import NotFound from './pages/NotFound'
 
 function ScrollToTop() {
@@ -34,6 +35,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/artwork/:id" element={<ArtworkDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
