@@ -5,11 +5,9 @@
 }
 
 .clamp-2 {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  max-height: 2.5em;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .clamp-3 {

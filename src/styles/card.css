@@ -15,6 +15,7 @@
   position: relative;
   overflow: hidden;
   border-radius: var(--radius) var(--radius) 0 0;
+  break-inside: avoid;
   background: var(--surface-2);
 }
 
@@ -92,6 +93,8 @@
 
 .art-card__body {
   position: relative;
+  overflow: hidden;
+  break-inside: avoid;
   padding: var(--space-3) var(--space-4) var(--space-4);
 }
 
