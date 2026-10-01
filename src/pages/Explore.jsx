@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import FilterToolbar, { ActiveFilters } from '../components/FilterToolbar'
 import MasonryGrid, { MasonrySkeleton } from '../components/MasonryGrid'
+import CardActions from '../components/CardActions'
 import { EmptyState, ErrorState } from '../components/PageState'
 import { DEFAULT_FILTERS, useExplore } from '../store/explore'
 import { toast } from '../store/ui'
@@ -85,7 +86,11 @@ export default function Explore() {
         {status !== 'error' && (status !== 'loading' || results.length) ? (
           visible.length ? (
             <div className={status === 'loading' ? 'is-refreshing' : undefined}>
-              <MasonryGrid items={visible} onOpen={(art) => openLightbox(visible, art.id)} />
+              <MasonryGrid
+                items={visible}
+                onOpen={(art) => openLightbox(visible, art.id)}
+                renderActions={(art) => <CardActions art={art} />}
+              />
             </div>
           ) : status === 'ready' ? (
             <EmptyState icon="search" title="No artworks match">

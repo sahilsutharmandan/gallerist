@@ -5,7 +5,8 @@ import { ErrorState, Loading } from '../components/PageState'
 import { useArtwork, useRelated } from '../hooks/useArtwork'
 import { RichText, plainText } from '../lib/richText'
 import { artistName } from '../lib/format'
-import { toast } from '../store/ui'
+import { toast, useUi } from '../store/ui'
+import { useCollections } from '../store/collections'
 import { useLightbox } from '../store/lightbox'
 
 function Meta({ label, children }) {
@@ -65,6 +66,10 @@ export default function ArtworkDetail() {
   const { data, summary, status, error, retry } = useArtwork(artworkId)
   const related = useRelated(data?.department, artworkId)
   const openLightbox = useLightbox((s) => s.open)
+  const favorite = useCollections((s) => s.favorites.some((a) => a.id === artworkId))
+  const savedIn = useCollections((s) => s.collections.filter((c) => c.items.some((a) => a.id === artworkId)).length)
+  const toggleFavorite = useCollections((s) => s.toggleFavorite)
+  const openCollectionModal = useUi((s) => s.openCollectionModal)
   const [bioOpen, setBioOpen] = useState(false)
 
   if (status === 'loading') return <Loading label="Fetching artwork" />
@@ -127,6 +132,20 @@ export default function ArtworkDetail() {
           <p className="detail__date">{data.creation_date}</p>
 
           <div className="detail__actions">
+            <button
+              type="button"
+              className={`btn btn--primary${favorite ? ' is-active' : ''}`}
+              onClick={() => {
+                const added = toggleFavorite(summary)
+                toast(added ? 'Added to favorites' : 'Removed from favorites', { tone: added ? 'success' : 'default' })
+              }}
+              aria-pressed={favorite}
+            >
+              <Icon name="heart" /> {favorite ? 'Favorited' : 'Favorite'}
+            </button>
+            <button type="button" className="btn btn--outline" onClick={() => openCollectionModal(summary)}>
+              <Icon name="folder" /> {savedIn ? `In ${savedIn} collection${savedIn > 1 ? 's' : ''}` : 'Save'}
+            </button>
             {data.url ? (
               <a href={data.url} target="_blank" rel="noreferrer" className="btn btn--outline">
                 <Icon name="external" /> Museum page
