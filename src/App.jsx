@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import Toasts from './components/Toasts'
 import { useUi } from './store/ui'
 import Home from './pages/Home'
+import Explore from './pages/Explore'
 import NotFound from './pages/NotFound'
 
 function ScrollToTop() {
@@ -32,6 +33,7 @@ export default function App() {
       <main className="site-main">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
