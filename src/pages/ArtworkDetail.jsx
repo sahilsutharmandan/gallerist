@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { ErrorState, Loading } from '../components/PageState'
 import { useArtwork, useRelated } from '../hooks/useArtwork'
@@ -7,6 +7,7 @@ import { RichText, plainText } from '../lib/richText'
 import { artistName } from '../lib/format'
 import { toast, useUi } from '../store/ui'
 import { useCollections } from '../store/collections'
+import { useCompare } from '../store/compare'
 import { useLightbox } from '../store/lightbox'
 
 function Meta({ label, children }) {
@@ -70,6 +71,9 @@ export default function ArtworkDetail() {
   const savedIn = useCollections((s) => s.collections.filter((c) => c.items.some((a) => a.id === artworkId)).length)
   const toggleFavorite = useCollections((s) => s.toggleFavorite)
   const openCollectionModal = useUi((s) => s.openCollectionModal)
+  const inCompare = useCompare((s) => s.slots.some((a) => a?.id === artworkId))
+  const addToCompare = useCompare((s) => s.add)
+  const navigate = useNavigate()
   const [bioOpen, setBioOpen] = useState(false)
 
   if (status === 'loading') return <Loading label="Fetching artwork" />
@@ -145,6 +149,18 @@ export default function ArtworkDetail() {
             </button>
             <button type="button" className="btn btn--outline" onClick={() => openCollectionModal(summary)}>
               <Icon name="folder" /> {savedIn ? `In ${savedIn} collection${savedIn > 1 ? 's' : ''}` : 'Save'}
+            </button>
+            <button
+              type="button"
+              className="btn btn--outline"
+              onClick={() => {
+                if (inCompare) return navigate('/compare')
+                const count = addToCompare(summary)
+                toast(count < 2 ? 'Added to compare — pick one more' : 'Ready to compare', { tone: 'success' })
+                if (count >= 2) navigate('/compare')
+              }}
+            >
+              <Icon name="columns" /> {inCompare ? 'Open compare' : 'Compare'}
             </button>
             {data.url ? (
               <a href={data.url} target="_blank" rel="noreferrer" className="btn btn--outline">

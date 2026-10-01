@@ -37,7 +37,7 @@ async function request(path, params = {}, signal) {
 }
 
 export async function searchArtworks(
-  { q, department, type, from, to, skip = 0, limit = 24 } = {},
+  { q, department, type, from, to, highlight, skip = 0, limit = 24 } = {},
   signal,
 ) {
   const json = await request(
@@ -48,6 +48,7 @@ export async function searchArtworks(
       type,
       created_after: from,
       created_before: to,
+      highlight: highlight ? 1 : undefined,
       has_image: 1,
       skip,
       limit,

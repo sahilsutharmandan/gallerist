@@ -8,11 +8,13 @@ import Lightbox from './components/Lightbox'
 import AddToCollectionModal from './components/AddToCollectionModal'
 import { useUi } from './store/ui'
 import { useCollections } from './store/collections'
+import { useCompare } from './store/compare'
 import Home from './pages/Home'
 import Explore from './pages/Explore'
 import ArtworkDetail from './pages/ArtworkDetail'
 import Collections from './pages/Collections'
 import CollectionDetail from './pages/CollectionDetail'
+import Compare from './pages/Compare'
 import NotFound from './pages/NotFound'
 
 function ScrollToTop() {
@@ -26,12 +28,13 @@ function ScrollToTop() {
 export default function App() {
   const theme = useUi((s) => s.theme)
   const collections = useCollections((s) => s.collections)
+  const compareCount = useCompare((s) => s.slots.filter(Boolean).length)
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
   }, [theme])
 
-  const badges = { '/collections': collections.length }
+  const badges = { '/collections': collections.length, '/compare': compareCount }
 
   return (
     <>
@@ -44,6 +47,7 @@ export default function App() {
           <Route path="/artwork/:id" element={<ArtworkDetail />} />
           <Route path="/collections" element={<Collections />} />
           <Route path="/collections/:id" element={<CollectionDetail />} />
+          <Route path="/compare" element={<Compare />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
