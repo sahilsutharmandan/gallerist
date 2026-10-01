@@ -116,11 +116,15 @@
   outline-offset: 1px;
 }
 
+.art-card__maker-wrap {
+  position: relative;
+}
+
 .art-card__tip {
   position: absolute;
-  bottom: calc(100% - var(--space-2));
-  left: var(--space-3);
-  right: var(--space-3);
+  top: calc(100% + 6px);
+  left: -6px;
+  right: -6px;
   z-index: 5;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
@@ -131,7 +135,7 @@
   box-shadow: var(--shadow);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(4px);
+  transform: translateY(-4px);
   transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility var(--dur);
   pointer-events: none;
 }

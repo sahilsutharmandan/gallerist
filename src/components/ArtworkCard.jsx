@@ -30,14 +30,16 @@ export default function ArtworkCard({ art, onOpen, actions }) {
         <h3 className="art-card__title clamp-2">
           <Link to={`/artwork/${art.id}`}>{art.title}</Link>
         </h3>
-        <p className="art-card__maker clamp-2" tabIndex={long ? 0 : undefined}>
-          {maker}
-        </p>
-        {long ? (
-          <span className="art-card__tip" role="tooltip">
+        <div className="art-card__maker-wrap">
+          <p className="art-card__maker clamp-2" tabIndex={long ? 0 : undefined}>
             {maker}
-          </span>
-        ) : null}
+          </p>
+          {long ? (
+            <span className="art-card__tip" role="tooltip">
+              {maker}
+            </span>
+          ) : null}
+        </div>
         <p className="art-card__meta">
           {[art.date, art.type].filter(Boolean).join(' · ')}
         </p>
