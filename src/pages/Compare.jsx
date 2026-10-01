@@ -121,7 +121,7 @@ export default function Compare() {
         </div>
       </div>
 
-      <div className="compare">
+      <div className="compare-grid">
         {slots.map((art, i) => (
           <div key={art?.id ?? `empty-${i}`} className="compare__slot">
             {art ? (
