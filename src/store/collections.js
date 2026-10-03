@@ -29,9 +29,7 @@ export const useCollections = create((set, get) => ({
       createdAt: now,
       updatedAt: now,
     }
-    const { collections } = get()
-    collections.push(collection)
-    set({ collections })
+    set((s) => ({ collections: [...s.collections, collection] }))
     return collection
   },
 
