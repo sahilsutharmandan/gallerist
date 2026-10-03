@@ -88,7 +88,7 @@ export default function Explore() {
             <div className={status === 'loading' ? 'is-refreshing' : undefined}>
               <MasonryGrid
                 items={visible}
-                onOpen={(art) => openLightbox(art.id)}
+                onOpen={(art) => openLightbox(art.id, visible)}
                 renderActions={(art) => <CardActions art={art} />}
               />
             </div>

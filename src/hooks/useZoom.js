@@ -11,8 +11,10 @@ export function useZoom({ min = 1, max = 4, enabled = true, resetKey } = {}) {
   const bounded = useCallback((scale, x, y) => {
     const el = targetRef.current
     if (!el) return { scale, x: 0, y: 0 }
-    const maxX = el.offsetWidth * scale
-    const maxY = el.offsetHeight * scale
+    const stage = stageRef.current
+    if (!stage) return { scale, x: 0, y: 0 }
+    const maxX = Math.max(0, (el.offsetWidth * scale - stage.clientWidth) / 2)
+    const maxY = Math.max(0, (el.offsetHeight * scale - stage.clientHeight) / 2)
     return { scale, x: clamp(x, -maxX, maxX), y: clamp(y, -maxY, maxY) }
   }, [])
 
@@ -26,11 +28,14 @@ export function useZoom({ min = 1, max = 4, enabled = true, resetKey } = {}) {
     [bounded, min, max],
   )
 
-  const reset = useCallback(() => setZoom({ scale: 1, x: 0, y: 0 }), [])
+  const reset = useCallback(() => {
+    dragRef.current = null
+    setZoom({ scale: min, x: 0, y: 0 })
+  }, [min])
 
   useEffect(() => {
     reset()
-  }, [resetKey, reset])
+  }, [resetKey, enabled, reset])
 
   useEffect(() => {
     const stage = stageRef.current
@@ -42,6 +47,15 @@ export function useZoom({ min = 1, max = 4, enabled = true, resetKey } = {}) {
     stage.addEventListener('wheel', onWheel, { passive: false })
     return () => stage.removeEventListener('wheel', onWheel)
   }, [enabled, zoomTo])
+
+  useEffect(() => {
+    if (!enabled || !stageRef.current || !targetRef.current) return undefined
+    const reflow = () => setZoom((z) => bounded(z.scale, z.x, z.y))
+    const observer = new ResizeObserver(reflow)
+    observer.observe(stageRef.current)
+    observer.observe(targetRef.current)
+    return () => observer.disconnect()
+  }, [enabled, resetKey, bounded])
 
   const bind = {
     onPointerDown: (e) => {
@@ -57,6 +71,9 @@ export function useZoom({ min = 1, max = 4, enabled = true, resetKey } = {}) {
     onPointerUp: () => {
       dragRef.current = null
     },
+    onLostPointerCapture: () => {
+      dragRef.current = null
+    },
     onPointerCancel: () => {
       dragRef.current = null
     },
@@ -64,7 +81,7 @@ export function useZoom({ min = 1, max = 4, enabled = true, resetKey } = {}) {
 
   const style = {
     transform: `translate3d(${zoom.x}px, ${zoom.y}px, 0) scale(${zoom.scale})`,
-    transformOrigin: '0 0',
+    transformOrigin: 'center center',
   }
 
   return { stageRef, targetRef, zoom, zoomTo, reset, bind, style, zoomed: zoom.scale > min }
