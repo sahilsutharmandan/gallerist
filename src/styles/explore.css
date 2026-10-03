@@ -14,7 +14,7 @@
 
 .filter-bar {
   position: sticky;
-  top: var(--header-height, 56px);
+  top: var(--header-h);
   z-index: var(--z-sticky);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
@@ -164,7 +164,8 @@
   cursor: pointer;
 }
 
-.chip--btn:hover {
+.chip--btn:hover,
+.chip--btn[aria-pressed="true"] {
   border-color: var(--accent);
   color: var(--accent);
 }

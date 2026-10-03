@@ -7,7 +7,8 @@ export default function RangeSlider({ min, max, step = 1, value, onChange, forma
 
   const handleChange = (index) => (e) => {
     const next = [...value]
-    next[index] = Number(e.target.value)
+    const year = Number(e.target.value)
+    next[index] = index === 0 ? Math.min(year, high) : Math.max(year, low)
     onChange(next)
   }
 
@@ -34,7 +35,7 @@ export default function RangeSlider({ min, max, step = 1, value, onChange, forma
           value={low}
           onChange={handleChange(0)}
           style={{ zIndex: low > max - (max - min) / 10 ? 3 : undefined }}
-          aria-labelledby={`${id}-label`}
+          aria-label={`${label}: start year`}
           aria-valuetext={format(low)}
         />
         <input
@@ -45,7 +46,7 @@ export default function RangeSlider({ min, max, step = 1, value, onChange, forma
           step={step}
           value={high}
           onChange={handleChange(1)}
-          aria-labelledby={`${id}-label`}
+          aria-label={`${label}: end year`}
           aria-valuetext={format(high)}
         />
       </div>

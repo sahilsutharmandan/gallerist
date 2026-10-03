@@ -2,7 +2,7 @@ const yearFormat = new Intl.NumberFormat('en-US', { useGrouping: false })
 
 export function formatYear(year) {
   if (year === null || year === undefined || Number.isNaN(year)) return ''
-  return yearFormat.format(year)
+  return year < 0 ? `${yearFormat.format(Math.abs(year))} BCE` : yearFormat.format(year)
 }
 
 export function formatYearRange([from, to]) {

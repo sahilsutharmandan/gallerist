@@ -7,7 +7,9 @@
   transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
 
-.art-card:hover {
+.art-card:hover,
+.art-card:focus-within {
+  z-index: 1;
   box-shadow: var(--shadow);
 }
 
@@ -93,7 +95,7 @@
 
 .art-card__body {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   break-inside: avoid;
   padding: var(--space-3) var(--space-4) var(--space-4);
 }

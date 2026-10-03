@@ -4,6 +4,7 @@
 }
 
 .masonry__item {
+  break-inside: avoid;
   display: flex;
   flex-direction: column;
   margin-bottom: var(--space-5);

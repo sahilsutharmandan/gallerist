@@ -66,7 +66,13 @@ export default function DateFilter({ value, onChange }) {
           />
           <div className="date-filter__presets">
             {PRESETS.map((p) => (
-              <button key={p.label} type="button" className="chip chip--btn" onClick={() => apply(p.range)}>
+              <button
+                key={p.label}
+                type="button"
+                className="chip chip--btn"
+                aria-pressed={draft[0] === p.range[0] && draft[1] === p.range[1]}
+                onClick={() => apply(p.range)}
+              >
                 {p.label}
               </button>
             ))}
