@@ -20,11 +20,12 @@ export function unlockScroll() {
   locks -= 1
   if (locks > 0) return
   const { body } = document
+  const scrollY = -parseInt(body.style.top || '0', 10)
   body.style.position = ''
   body.style.top = ''
   body.style.left = ''
   body.style.right = ''
   body.style.overflow = ''
   body.style.paddingRight = ''
-  window.scrollTo(0, -parseInt(body.style.top || '0', 10))
+  window.scrollTo(0, scrollY)
 }

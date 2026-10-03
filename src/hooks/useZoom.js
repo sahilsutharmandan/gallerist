@@ -10,9 +10,12 @@ export function useZoom({ min = 1, max = 4, enabled = true, resetKey } = {}) {
 
   const bounded = useCallback((scale, x, y) => {
     const el = targetRef.current
+    const stage = stageRef.current
     if (!el) return { scale, x: 0, y: 0 }
-    const maxX = el.offsetWidth * scale
-    const maxY = el.offsetHeight * scale
+    const stageW = stage ? stage.clientWidth : window.innerWidth
+    const stageH = stage ? stage.clientHeight : window.innerHeight
+    const maxX = Math.max(0, (el.offsetWidth * scale - stageW) / 2)
+    const maxY = Math.max(0, (el.offsetHeight * scale - stageH) / 2)
     return { scale, x: clamp(x, -maxX, maxX), y: clamp(y, -maxY, maxY) }
   }, [])
 
@@ -20,7 +23,7 @@ export function useZoom({ min = 1, max = 4, enabled = true, resetKey } = {}) {
     (next) =>
       setZoom((z) => {
         const scale = clamp(next(z.scale), min, max)
-        const ratio = scale / z.scale
+        const ratio = z.scale > 0 ? scale / z.scale : 1
         return bounded(scale, z.x * ratio, z.y * ratio)
       }),
     [bounded, min, max],
@@ -31,6 +34,13 @@ export function useZoom({ min = 1, max = 4, enabled = true, resetKey } = {}) {
   useEffect(() => {
     reset()
   }, [resetKey, reset])
+
+  useEffect(() => {
+    if (!enabled) return undefined
+    const onResize = () => setZoom((z) => bounded(z.scale, z.x, z.y))
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [enabled, bounded])
 
   useEffect(() => {
     const stage = stageRef.current
@@ -64,7 +74,7 @@ export function useZoom({ min = 1, max = 4, enabled = true, resetKey } = {}) {
 
   const style = {
     transform: `translate3d(${zoom.x}px, ${zoom.y}px, 0) scale(${zoom.scale})`,
-    transformOrigin: '0 0',
+    transformOrigin: 'center center',
   }
 
   return { stageRef, targetRef, zoom, zoomTo, reset, bind, style, zoomed: zoom.scale > min }
