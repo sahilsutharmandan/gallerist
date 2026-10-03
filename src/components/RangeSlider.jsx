@@ -1,15 +1,23 @@
 import { useId } from 'react'
+import { formatYearRange } from '../lib/format'
 
 export default function RangeSlider({ min, max, step = 1, value, onChange, format = String, label }) {
   const id = useId()
-  const [low, high] = value
+  const low = Math.min(value[0], value[1])
+  const high = Math.max(value[0], value[1])
   const pct = (v) => ((v - min) / (max - min)) * 100
 
   const handleChange = (index) => (e) => {
-    const next = [...value]
-    next[index] = Number(e.target.value)
-    onChange(next)
+    const val = Number(e.target.value)
+    if (index === 0) {
+      onChange([Math.min(val, high), high])
+    } else {
+      onChange([low, Math.max(val, low)])
+    }
   }
+
+  const lowPct = Math.min(pct(low), pct(high))
+  const highPct = Math.max(pct(low), pct(high))
 
   return (
     <div className="range">
@@ -18,12 +26,12 @@ export default function RangeSlider({ min, max, step = 1, value, onChange, forma
           {label}
         </span>
         <span className="range__value">
-          {format(low)} – {format(high)}
+          {formatYearRange([low, high])}
         </span>
       </div>
       <div
         className="range__track"
-        style={{ '--from': `${pct(low)}%`, '--to': `${pct(high)}%` }}
+        style={{ '--from': `${lowPct}%`, '--to': `${highPct}%` }}
       >
         <input
           type="range"
@@ -33,7 +41,7 @@ export default function RangeSlider({ min, max, step = 1, value, onChange, forma
           step={step}
           value={low}
           onChange={handleChange(0)}
-          style={{ zIndex: low > max - (max - min) / 10 ? 3 : undefined }}
+          style={{ zIndex: low >= high - step ? (low > (min + max) / 2 ? 3 : 1) : (low > max - (max - min) / 10 ? 3 : undefined) }}
           aria-labelledby={`${id}-label`}
           aria-valuetext={format(low)}
         />

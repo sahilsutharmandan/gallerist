@@ -1,27 +1,28 @@
 .masonry {
-  column-count: 4;
-  column-gap: var(--space-5);
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+}
+
+.masonry__col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
 }
 
 .masonry__item {
   display: flex;
   flex-direction: column;
-  margin-bottom: var(--space-5);
-}
-
-@media (max-width: 1180px) {
-  .masonry {
-    column-count: 3;
-  }
 }
 
 @media (max-width: 860px) {
   .masonry {
-    column-count: 2;
-    column-gap: var(--space-4);
+    gap: var(--space-4);
   }
 
-  .masonry__item {
-    margin-bottom: var(--space-4);
+  .masonry__col {
+    gap: var(--space-4);
   }
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Icon from './Icon'
-import DateFilter, { isAnyDate } from './DateFilter'
+import DateFilter, { isAnyDate, getPreset } from './DateFilter'
 import { DEPARTMENTS, SORTS, TYPES } from '../lib/constants'
 import { formatYearRange } from '../lib/format'
 import { DEFAULT_FILTERS } from '../store/explore'
@@ -118,7 +118,12 @@ export function ActiveFilters({ filters, onFilters, onReset }) {
   }
   if (filters.type) chips.push({ key: 'type', label: filters.type, clear: { type: '' } })
   if (!isAnyDate(filters.range)) {
-    chips.push({ key: 'range', label: formatYearRange(filters.range), clear: { range: DEFAULT_FILTERS.range } })
+    const preset = getPreset(filters.range)
+    chips.push({
+      key: 'range',
+      label: preset ? preset.label : formatYearRange(filters.range),
+      clear: { range: DEFAULT_FILTERS.range },
+    })
   }
   if (filters.publicDomain) {
     chips.push({ key: 'pd', label: 'Public domain', clear: { publicDomain: false } })

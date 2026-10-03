@@ -4,7 +4,7 @@ import RangeSlider from './RangeSlider'
 import { YEAR_MAX, YEAR_MIN, YEAR_STEP } from '../lib/constants'
 import { formatYear, formatYearRange } from '../lib/format'
 
-const PRESETS = [
+export const PRESETS = [
   { label: 'Antiquity', range: [-3000, 500] },
   { label: 'Medieval', range: [500, 1400] },
   { label: 'Renaissance', range: [1400, 1600] },
@@ -12,6 +12,11 @@ const PRESETS = [
   { label: '19th century', range: [1800, 1900] },
   { label: 'Modern', range: [1900, YEAR_MAX] },
 ]
+
+export function getPreset(range) {
+  if (!range) return null
+  return PRESETS.find((p) => p.range[0] === range[0] && p.range[1] === range[1]) ?? null
+}
 
 export function isAnyDate([from, to]) {
   return from <= YEAR_MIN && to >= YEAR_MAX
@@ -43,6 +48,8 @@ export default function DateFilter({ value, onChange }) {
     onChange(range)
   }
 
+  const activePreset = getPreset(value)
+
   return (
     <div className="date-filter" ref={ref}>
       <button
@@ -51,7 +58,7 @@ export default function DateFilter({ value, onChange }) {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
       >
-        {isAnyDate(value) ? 'Any date' : formatYearRange(value)}
+        {isAnyDate(value) ? 'Any date' : activePreset ? activePreset.label : formatYearRange(value)}
       </button>
       {open ? (
         <div className="date-filter__panel">
@@ -65,11 +72,19 @@ export default function DateFilter({ value, onChange }) {
             onChange={setDraft}
           />
           <div className="date-filter__presets">
-            {PRESETS.map((p) => (
-              <button key={p.label} type="button" className="chip chip--btn" onClick={() => apply(p.range)}>
-                {p.label}
-              </button>
-            ))}
+            {PRESETS.map((p) => {
+              const isSelected = draft[0] === p.range[0] && draft[1] === p.range[1]
+              return (
+                <button
+                  key={p.label}
+                  type="button"
+                  className={`chip chip--btn${isSelected ? ' is-active' : ''}`}
+                  onClick={() => apply(p.range)}
+                >
+                  {p.label}
+                </button>
+              )
+            })}
           </div>
           <div className="date-filter__foot">
             <button type="button" className="btn btn--ghost btn--sm" onClick={() => apply([YEAR_MIN, YEAR_MAX])}>

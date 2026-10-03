@@ -14,11 +14,12 @@
 
 .filter-bar {
   position: sticky;
-  top: var(--header-height, 56px);
+  top: var(--header-h);
   z-index: var(--z-sticky);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   background: var(--bg);
+  box-shadow: var(--shadow-sm);
 }
 
 .filter-bar__inner {
@@ -162,11 +163,19 @@
 
 .chip--btn {
   cursor: pointer;
+  transition: all var(--dur) var(--ease);
 }
 
 .chip--btn:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.chip--btn.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 500;
 }
 
 .date-filter__foot {

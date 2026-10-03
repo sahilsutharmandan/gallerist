@@ -1,12 +1,19 @@
-const yearFormat = new Intl.NumberFormat('en-US', { useGrouping: false })
-
 export function formatYear(year) {
   if (year === null || year === undefined || Number.isNaN(year)) return ''
-  return yearFormat.format(year)
+  if (year < 0) return `${Math.abs(year)} BCE`
+  return `${year}`
 }
 
 export function formatYearRange([from, to]) {
-  return `${formatYear(from)} – ${formatYear(to)}`
+  const min = Math.min(from, to)
+  const max = Math.max(from, to)
+  if (min < 0 && max < 0) {
+    return `${Math.abs(min)} – ${Math.abs(max)} BCE`
+  }
+  if (min < 0 && max >= 0) {
+    return `${Math.abs(min)} BCE – ${max} CE`
+  }
+  return `${min} – ${max}`
 }
 
 export function artistName(artist) {
