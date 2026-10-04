@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import { getArtwork, searchArtworks, toSummary } from '../api/cma'
 
 const cache = new Map()
+const relatedCache = new Map()
+
+const LOADING = { data: null, status: 'loading', error: null }
 
 export function useArtwork(id) {
   const [state, setState] = useState(() =>
-    cache.has(id) ? { data: cache.get(id), status: 'ready', error: null } : { data: null, status: 'loading', error: null },
+    cache.has(id) ? { data: cache.get(id), status: 'ready', error: null } : LOADING,
   )
-  const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
     if (!id) return undefined
@@ -16,7 +18,7 @@ export function useArtwork(id) {
       return undefined
     }
     const ctrl = new AbortController()
-    setState({ data: null, status: 'loading', error: null })
+    setState(LOADING)
     getArtwork(id, ctrl.signal)
       .then((data) => {
         cache.set(id, data)
@@ -27,23 +29,30 @@ export function useArtwork(id) {
         setState({ data: null, status: 'error', error: err.message })
       })
     return () => ctrl.abort()
-  }, [id, attempt])
+  }, [id])
 
-  return { ...state, summary: state.data ? toSummary(state.data) : null, retry: () => setAttempt((n) => n + 1) }
+  return { ...state, summary: state.data ? toSummary(state.data) : null, retry: () => setState(LOADING) }
 }
 
 export function useRelated(department, excludeId, limit = 8) {
-  const [items, setItems] = useState([])
-  const [status, setStatus] = useState('idle')
+  const [items, setItems] = useState(() => relatedCache.get(department) ?? [])
+  const [status, setStatus] = useState(() => (relatedCache.has(department) ? 'ready' : 'idle'))
 
   useEffect(() => {
     if (!department) return undefined
+    if (relatedCache.has(department)) {
+      setItems(relatedCache.get(department))
+      setStatus('ready')
+      return undefined
+    }
     const ctrl = new AbortController()
     setStatus('loading')
     const skip = Number(String(excludeId).slice(-2)) % 40
     searchArtworks({ department, limit: limit + 1, skip }, ctrl.signal)
       .then(({ items: list }) => {
-        setItems(list.filter((a) => a.id !== excludeId).slice(0, limit))
+        const picked = list.filter((a) => a.id !== excludeId).slice(0, limit)
+        relatedCache.set(department, picked)
+        setItems(picked)
         setStatus('ready')
       })
       .catch((err) => {
