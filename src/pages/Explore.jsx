@@ -19,6 +19,7 @@ export default function Explore() {
   const status = useExplore((s) => s.status)
   const error = useExplore((s) => s.error)
   const loadingMore = useExplore((s) => s.loadingMore)
+  const hasMore = useExplore((s) => s.hasMore)
   const setFilters = useExplore((s) => s.setFilters)
   const setSort = useExplore((s) => s.setSort)
   const search = useExplore((s) => s.search)
@@ -29,8 +30,12 @@ export default function Explore() {
     const q = params.get('q')
     const department = params.get('department')
     const type = params.get('type')
-    if (q === null && department === null && type === null) return
-    setFilters({ ...DEFAULT_FILTERS, q: q ?? '', department: department ?? '', type: type ?? '' })
+    const patch = {}
+    if (q !== null) patch.q = q
+    if (department !== null) patch.department = department
+    if (type !== null) patch.type = type
+    if (!Object.keys(patch).length) return
+    setFilters(patch)
     setParams({}, { replace: true })
   }, [params, setFilters, setParams])
 
@@ -99,7 +104,7 @@ export default function Explore() {
           ) : null
         ) : null}
 
-        {status === 'ready' && results.length < total ? (
+        {status === 'ready' && hasMore ? (
           <div className="explore__more">
             <p className="muted">
               Showing {results.length.toLocaleString()} of {total.toLocaleString()}

@@ -34,6 +34,8 @@ export const useExplore = create((set, get) => ({
   status: 'idle',
   error: null,
   loadingMore: false,
+  page: 0,
+  hasMore: false,
 
   setFilters: (patch) => set((s) => ({ filters: { ...s.filters, ...patch } })),
   resetFilters: () => set({ filters: { ...DEFAULT_FILTERS } }),
@@ -47,9 +49,9 @@ export const useExplore = create((set, get) => ({
     const id = ++requestId
     set({ status: 'loading', error: null })
     try {
-      const { items, total } = await searchArtworks({ ...params, limit: PAGE_SIZE })
+      const { items, total } = await searchArtworks({ ...params, limit: PAGE_SIZE + 1 })
       if (id !== requestId) return
-      set({ results: items, total, status: 'ready' })
+      set({ results: items, total, page: 1, hasMore: items.length > PAGE_SIZE, status: 'ready' })
     } catch (err) {
       if (id !== requestId) return
       lastKey = ''
@@ -58,25 +60,21 @@ export const useExplore = create((set, get) => ({
   },
 
   loadMore: async () => {
-    const { results, total, loadingMore, filters } = get()
-    if (loadingMore || results.length >= total) return
+    const { page, hasMore, loadingMore, filters } = get()
+    if (loadingMore || !hasMore) return
     const id = requestId
     set({ loadingMore: true })
-    try {
-      const { items } = await searchArtworks({
-        ...toParams(filters),
-        skip: results.length,
-        limit: PAGE_SIZE,
-      })
-      if (id !== requestId) return
-      const seen = new Set(get().results.map((a) => a.id))
-      set((s) => ({
-        results: [...s.results, ...items.filter((a) => !seen.has(a.id))],
-        loadingMore: false,
-      }))
-    } catch (err) {
-      set({ loadingMore: false })
-      throw err
-    }
+    const { items } = await searchArtworks({
+      ...toParams(filters),
+      skip: page * PAGE_SIZE,
+      limit: PAGE_SIZE + 1,
+    })
+    if (id !== requestId) return
+    set((s) => ({
+      results: [...s.results, ...items.slice(0, PAGE_SIZE)],
+      page: s.page + 1,
+      hasMore: items.length > PAGE_SIZE,
+      loadingMore: false,
+    }))
   },
 }))
