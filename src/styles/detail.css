@@ -166,11 +166,16 @@
 }
 
 .detail__fact {
-  padding: var(--space-5);
+  padding: var(--space-5) var(--space-5) var(--space-5) var(--space-6);
   border-left: 3px solid var(--gold);
   border-radius: 0 var(--radius) var(--radius) 0;
-  background: var(--surface);
+  background: var(--surface-note);
   color: var(--text-2);
+  box-shadow: var(--shadow-sm);
+}
+
+.detail__fact h3 {
+  font-style: italic;
 }
 
 .tombstone {
@@ -272,6 +277,7 @@
   }
 
   .detail__image img {
+    width: 100%;
     max-height: 70vh;
   }
 
