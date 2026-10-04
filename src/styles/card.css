@@ -38,24 +38,34 @@
   position: absolute;
   top: var(--space-2);
   right: var(--space-2);
+  z-index: 1;
   display: flex;
   gap: 6px;
   opacity: 0;
   transform: translateY(-4px);
-  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+  transition: opacity var(--dur) var(--ease) 60ms, transform var(--dur) var(--ease) 60ms;
 }
 
 .art-card:hover .art-card__actions,
 .art-card:focus-within .art-card__actions {
   opacity: 1;
   transform: none;
+  transition-delay: 0ms;
 }
 
-@media (hover: none) {
-  .art-card__actions {
-    opacity: 1;
-    transform: none;
-  }
+.art-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 64px;
+  background: linear-gradient(to bottom, rgba(15, 10, 5, 0.28), rgba(15, 10, 5, 0));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.art-card:hover .art-card__media::after {
+  opacity: 1;
 }
 
 .art-card__action {
