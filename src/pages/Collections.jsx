@@ -7,12 +7,13 @@ import { EmptyState } from '../components/PageState'
 import { useCollections } from '../store/collections'
 import { useLightbox } from '../store/lightbox'
 import { toast } from '../store/ui'
-import { pluralize } from '../lib/format'
+import { pluralize, timeAgo } from '../lib/format'
 
 function CollectionCover({ items }) {
   const thumbs = items.slice(0, 4)
+  const extra = items.length - thumbs.length
   return (
-    <div className={`collection-cover collection-cover--${Math.max(thumbs.length, 1)}`}>
+    <div className={`collection-cover collection-cover--${items.length || 1}`}>
       {thumbs.length ? (
         thumbs.map((a) => <img key={a.id} src={a.image} alt="" loading="lazy" />)
       ) : (
@@ -20,16 +21,9 @@ function CollectionCover({ items }) {
           <Icon name="image" />
         </span>
       )}
+      {extra > 0 ? <span className="collection-cover__more">+{extra}</span> : null}
     </div>
   )
-}
-
-function relativeDate(ts) {
-  const days = Math.floor((Date.now() - ts) / 86400000)
-  if (days < 1) return 'Updated today'
-  if (days === 1) return 'Updated yesterday'
-  if (days < 30) return `Updated ${days} days ago`
-  return `Updated ${new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`
 }
 
 export default function Collections() {
@@ -97,7 +91,7 @@ export default function Collections() {
               <div className="collection-card__body">
                 <h3 className="clamp-1">{c.name}</h3>
                 <p>
-                  {pluralize(c.items.length, 'work')} · {relativeDate(c.updatedAt)}
+                  {pluralize(c.items.length, 'work')} · Updated {timeAgo(c.updatedAt)}
                 </p>
               </div>
             </Link>

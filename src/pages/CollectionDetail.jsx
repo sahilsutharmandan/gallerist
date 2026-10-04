@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { EmptyState } from '../components/PageState'
 import { useCollections } from '../store/collections'
 import { useLightbox } from '../store/lightbox'
 import { toast } from '../store/ui'
-import { artistLine, pluralize } from '../lib/format'
+import { artistLine, pluralize, timeAgo } from '../lib/format'
 
 export default function CollectionDetail() {
   const { id } = useParams()
@@ -20,6 +20,7 @@ export default function CollectionDetail() {
   const [draft, setDraft] = useState({ name: '', description: '' })
   const [dragIndex, setDragIndex] = useState(null)
   const [overIndex, setOverIndex] = useState(null)
+  const updated = useMemo(() => timeAgo(collection.updatedAt), [collection.updatedAt])
 
   if (!collection) {
     return (
@@ -108,7 +109,9 @@ export default function CollectionDetail() {
       ) : (
         <div className="page-head">
           <div>
-            <p className="eyebrow">{pluralize(items.length, 'work')}</p>
+            <p className="eyebrow">
+              {pluralize(items.length, 'work')} · Updated {updated}
+            </p>
             <h1>{collection.name}</h1>
             {collection.description ? <p>{collection.description}</p> : null}
           </div>
